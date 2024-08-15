@@ -251,6 +251,22 @@ from combined_sku
 group by orderdate, skus
 order by 1,2;
 
+# Pizza Topping Cost Analysis:
+
+create table topping(topping_name varchar(50) primary key, cost decimal(5,2) not null);
+insert into topping (topping_name, cost) values ("Pepporoni", 0.50), ("Sausage", 0.70), ("Chicken", 0.55), ("Extra Cheese", 0.40);
+select * from topping;
+## Write a Query to calculate the total cost of all possible 3-topping pizza combination from a given list of toppings,
+## The  total cost of topping must be rounded to decimal places
+
+with cte as(
+select *, row_number() over(order by (select null)) as rn from topping)
+select group_concat(c.topping_name order by c.topping_name) as pizza, round(sum(c.cost),2) as total_cost
+from cte c
+inner join cte c1
+on c.rn<>c1.rn
+group by c1.rn
+order by total_cost desc;
 
 
 
